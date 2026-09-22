@@ -76,6 +76,7 @@
       }
     }
     function next() { show((idx + 1) % slides.length); }
+    function prev() { show((idx - 1 + slides.length) % slides.length); }
     function start() { if (reduced || slides.length < 2) return; stop(); timer = setInterval(next, 5500); }
     function stop() { clearInterval(timer); }
 
@@ -88,9 +89,15 @@
         dotsWrap.appendChild(b);
       });
     }
+    var wrap = slider.closest(".ufuk-connect");
+    if (wrap && slides.length > 1) {
+      var prevBtn = wrap.querySelector(".ufuk-connect-arrow-prev");
+      var nextBtn = wrap.querySelector(".ufuk-connect-arrow-next");
+      if (prevBtn) prevBtn.addEventListener("click", function () { prev(); start(); });
+      if (nextBtn) nextBtn.addEventListener("click", function () { next(); start(); });
+    }
     show(0);
     start();
-    var wrap = slider.closest(".ufuk-connect");
     if (wrap) {
       wrap.addEventListener("mouseenter", stop);
       wrap.addEventListener("mouseleave", start);
