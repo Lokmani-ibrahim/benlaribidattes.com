@@ -244,6 +244,21 @@ html[data-lang="en"] [data-fr-only]{display:none !important;}
 .ufuk-connect p.lead{color:rgba(251,246,234,.85);font-size:1.12rem;max-width:560px;margin-bottom:34px;}
 .ufuk-connect-actions{display:flex;gap:16px;flex-wrap:wrap;}
 
+/* hero copy (all pages): white + gold, each with a thin dark halo so it stays legible on light or dark photos */
+.ufuk-connect .container{
+  --hero-halo:
+    0 0 1px rgba(10,22,12,.95),
+    0 1px 2px rgba(10,22,12,.9),
+    0 0 10px rgba(10,22,12,.55),
+    0 2px 22px rgba(10,22,12,.45);
+}
+.ufuk-connect .container .eyebrow{color:#ffd46e;font-weight:700;text-shadow:var(--hero-halo);}
+.ufuk-connect .container .eyebrow::before{background:#ffd46e;box-shadow:0 0 0 1px rgba(10,22,12,.6);}
+.ufuk-connect .container h1{color:#fff;text-shadow:var(--hero-halo);}
+.ufuk-connect .container h1 em{color:#ffd46e;}
+.ufuk-connect .container p.lead{color:#fff;font-weight:500;text-shadow:var(--hero-halo);}
+.ufuk-connect .container .breadcrumb,.ufuk-connect .container .breadcrumb a{color:#fff;text-shadow:var(--hero-halo);}
+
 /* page (non-home) ufuk-connect, shorter */
 .page-ufuk-connect{min-height:52vh;}
 .page-ufuk-connect .ufuk-connect-inner{max-width:640px;}
