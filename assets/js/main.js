@@ -39,11 +39,34 @@
     var toggle = document.querySelector(".menu-toggle");
     var nav = document.querySelector(".main-nav");
     if (!toggle || !nav) return;
+
+    // quote button + contact details at the bottom of the mobile menu (hidden on desktop)
+    var extra = document.createElement("div");
+    extra.className = "nav-extra";
+    extra.innerHTML =
+      '<a href="contact.html" class="btn btn-primary"><span data-fr-only>Demander un devis</span><span data-en-only>Request a quote</span></a>' +
+      '<a class="nav-extra-line" href="tel:+21695542200"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+216 95 542 200</a>' +
+      '<a class="nav-extra-line" href="mailto:contact@benlaribidattes.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>contact@benlaribidattes.com</a>';
+    nav.appendChild(extra);
+
+    toggle.setAttribute("aria-expanded", "false");
+    function setOpen(open) {
+      nav.classList.toggle("open", open);
+      toggle.classList.toggle("is-open", open);
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      document.body.classList.toggle("menu-open", open);
+    }
     toggle.addEventListener("click", function () {
-      nav.classList.toggle("open");
+      setOpen(!nav.classList.contains("open"));
     });
     nav.querySelectorAll("a").forEach(function (a) {
-      a.addEventListener("click", function () { nav.classList.remove("open"); });
+      a.addEventListener("click", function () { setOpen(false); });
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") setOpen(false);
+    });
+    window.addEventListener("resize", function () {
+      if (window.innerWidth > 920) setOpen(false);
     });
   }
 
@@ -101,6 +124,19 @@
     if (wrap) {
       wrap.addEventListener("mouseenter", stop);
       wrap.addEventListener("mouseleave", start);
+      // horizontal swipe on touch screens
+      var x0 = null, y0 = null;
+      wrap.addEventListener("touchstart", function (e) {
+        x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
+      }, { passive: true });
+      wrap.addEventListener("touchend", function (e) {
+        if (x0 === null || slides.length < 2) return;
+        var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+        x0 = null;
+        if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
+        if (dx < 0) next(); else prev();
+        start();
+      }, { passive: true });
     }
   }
 
