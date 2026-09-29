@@ -120,6 +120,60 @@
     items.forEach(function (el) { io.observe(el); });
   }
 
+  /* ---------- products page: highlight current category chip ---------- */
+  function initCatNav() {
+    var links = document.querySelectorAll(".cat-nav a");
+    if (!links.length) return;
+
+    // scroll a category to just below the fixed header + sticky category bar
+    var catNav = document.querySelector(".cat-nav");
+    function goTo(id, smooth) {
+      var el = id && document.getElementById(id);
+      if (!el) return;
+      var headerH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 0;
+      var top = el.getBoundingClientRect().top + window.pageYOffset - headerH - catNav.offsetHeight - 16;
+      var root = document.documentElement;
+      if (!smooth) root.style.scrollBehavior = "auto"; // bypass the CSS smooth scrolling for the initial jump
+      window.scrollTo({ top: Math.max(0, top), behavior: smooth ? "smooth" : "auto" });
+      if (!smooth) root.style.scrollBehavior = "";
+    }
+    links.forEach(function (a) {
+      a.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        var id = a.getAttribute("href").slice(1);
+        history.replaceState(null, "", "#" + id);
+        goTo(id, true);
+      });
+    });
+    // arriving from another page with #category: re-apply once layout and images are ready
+    if (location.hash) {
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+      var id = location.hash.slice(1);
+      goTo(id, false);
+      window.addEventListener("load", function () { goTo(id, false); });
+    }
+
+    if (!("IntersectionObserver" in window)) return;
+    var map = {};
+    links.forEach(function (a) { map[a.getAttribute("href").slice(1)] = a; });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        links.forEach(function (a) { a.classList.remove("is-current"); });
+        var a = map[e.target.id];
+        if (a) {
+          a.classList.add("is-current");
+          var bar = a.parentNode;
+          bar.scrollTo({ left: a.offsetLeft - (bar.clientWidth - a.offsetWidth) / 2, behavior: "smooth" });
+        }
+      });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    Object.keys(map).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) io.observe(el);
+    });
+  }
+
   /* ---------- active nav link ---------- */
   function initActiveNav() {
     var here = (location.pathname.split("/").pop() || "index.html");
@@ -175,6 +229,7 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     initLang();
+    initCatNav();
     initHeader();
     initMenu();
     initMedia();
