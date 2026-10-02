@@ -76,8 +76,9 @@
       var wrap = img.closest(".media, .brand-mark, .ufuk-connect-photo, .ufuk-connect-slide");
       var mark = function () { wrap && wrap.classList.add("has-img"); };
       if (img.complete && img.naturalWidth > 0) mark();
+      else if (img.complete && img.currentSrc) wrap && wrap.classList.add("no-img");
       img.addEventListener("load", mark);
-      img.addEventListener("error", function () { img.style.display = "none"; });
+      img.addEventListener("error", function () { img.style.display = "none"; wrap && wrap.classList.add("no-img"); });
     });
   }
 
