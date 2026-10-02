@@ -264,6 +264,137 @@
     });
   }
 
+  /* ---------- catalogue viewer (built on first open, images load lazily) ---------- */
+  function initCatalogue() {
+    var openers = document.querySelectorAll("[data-catalogue-open]");
+    if (!openers.length || typeof HTMLDialogElement === "undefined") return;
+    var DIR = "assets/catalogue/";
+    var PDF = DIR + "catalogue-ben-laribi-dattes.pdf";
+    var pages = [1, 2].map(function (n) {
+      return {
+        src: DIR + "catalogue-page-" + n + ".webp",
+        srcset: DIR + "catalogue-page-" + n + "-1100.webp 1100w, " + DIR + "catalogue-page-" + n + ".webp 2200w",
+        thumb: DIR + "catalogue-thumb-" + n + ".webp"
+      };
+    });
+    var icon = function (d) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + "</svg>"; };
+    var dialog, figure, img, prevBtn, nextBtn, countEl, thumbs, current = 0, lastFocus;
+
+    function build() {
+      dialog = document.createElement("dialog");
+      dialog.className = "catalogue-modal";
+      dialog.setAttribute("aria-labelledby", "catalogue-title");
+      dialog.innerHTML =
+        '<div class="catalogue-head">' +
+          '<div><div class="eyebrow">Ben Laribi Dattes</div>' +
+          '<h2 id="catalogue-title"><span data-fr-only>Notre Catalogue</span><span data-en-only>Our Catalogue</span></h2></div>' +
+          '<div class="catalogue-tools">' +
+            '<a class="catalogue-dl" href="' + PDF + '" download="Catalogue-Ben-Laribi-Dattes.pdf">' +
+              icon('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>') +
+              '<span data-fr-only>Télécharger le PDF</span><span data-en-only>Download PDF</span></a>' +
+            '<button type="button" class="catalogue-icon-btn" data-close aria-label="Fermer / Close">' + icon('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>') + "</button>" +
+          "</div>" +
+        "</div>" +
+        '<div class="catalogue-stage">' +
+          '<button type="button" class="catalogue-icon-btn" data-prev aria-label="Page précédente / Previous page">' + icon('<polyline points="15 18 9 12 15 6"/>') + "</button>" +
+          '<figure class="catalogue-page"><span class="catalogue-loader"></span><img alt="" sizes="(max-width: 1200px) 100vw, 2200px" draggable="false"></figure>' +
+          '<button type="button" class="catalogue-icon-btn" data-next aria-label="Page suivante / Next page">' + icon('<polyline points="9 18 15 12 9 6"/>') + "</button>" +
+        "</div>" +
+        '<div class="catalogue-foot">' +
+          '<div class="catalogue-thumbs">' + pages.map(function (p, i) {
+            return '<button type="button" class="catalogue-thumb" data-page="' + i + '" aria-label="Page ' + (i + 1) + '"><img src="' + p.thumb + '" alt=""></button>';
+          }).join("") + "</div>" +
+          '<span class="catalogue-count" aria-live="polite"></span>' +
+          '<span class="catalogue-hint"><span data-fr-only>Cliquez sur la page pour zoomer · glissez pour tourner</span><span data-en-only>Click the page to zoom · swipe to turn</span></span>' +
+        "</div>";
+      document.body.appendChild(dialog);
+      figure = dialog.querySelector(".catalogue-page");
+      img = figure.querySelector("img");
+      prevBtn = dialog.querySelector("[data-prev]");
+      nextBtn = dialog.querySelector("[data-next]");
+      countEl = dialog.querySelector(".catalogue-count");
+      thumbs = dialog.querySelectorAll(".catalogue-thumb");
+
+      dialog.querySelector("[data-close]").addEventListener("click", function () { dialog.close(); });
+      prevBtn.addEventListener("click", function () { show(current - 1); });
+      nextBtn.addEventListener("click", function () { show(current + 1); });
+      thumbs.forEach(function (t) { t.addEventListener("click", function () { show(+t.dataset.page); }); });
+      img.addEventListener("load", function () { figure.classList.add("is-ready"); });
+      // click outside the page (on the dark backdrop area) closes
+      dialog.addEventListener("click", function (e) { if (e.target === dialog) dialog.close(); });
+      dialog.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowRight") show(current + 1);
+        if (e.key === "ArrowLeft") show(current - 1);
+      });
+      dialog.addEventListener("close", function () {
+        document.documentElement.style.overflow = "";
+        unzoom();
+        if (lastFocus) lastFocus.focus();
+      });
+
+      // zoom: click toggles, pointer position pans while zoomed
+      var downX = 0, downY = 0, moved = false;
+      figure.addEventListener("pointerdown", function (e) { downX = e.clientX; downY = e.clientY; moved = false; });
+      figure.addEventListener("pointermove", function (e) {
+        if (Math.abs(e.clientX - downX) > 8 || Math.abs(e.clientY - downY) > 8) moved = true;
+        if (figure.classList.contains("is-zoomed")) setOrigin(e);
+      });
+      figure.addEventListener("pointerup", function (e) {
+        var dx = e.clientX - downX;
+        if (!figure.classList.contains("is-zoomed") && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(e.clientY - downY)) {
+          show(current + (dx < 0 ? 1 : -1));
+        } else if (!moved && e.target === img) {
+          if (figure.classList.contains("is-zoomed")) unzoom();
+          else { setOrigin(e); figure.classList.add("is-zoomed"); }
+        }
+      });
+    }
+
+    function setOrigin(e) {
+      var r = img.getBoundingClientRect();
+      var x = Math.min(100, Math.max(0, ((e.clientX - r.left) / r.width) * 100));
+      var y = Math.min(100, Math.max(0, ((e.clientY - r.top) / r.height) * 100));
+      img.style.transformOrigin = x + "% " + y + "%";
+    }
+    function unzoom() { figure.classList.remove("is-zoomed"); img.style.transformOrigin = ""; }
+
+    function show(i) {
+      if (i < 0 || i >= pages.length) return;
+      var dir = i > current ? "turn-next" : "turn-prev";
+      var first = !img.getAttribute("src");
+      unzoom();
+      current = i;
+      if (!img.complete || first) figure.classList.remove("is-ready");
+      img.srcset = pages[i].srcset;
+      img.src = pages[i].src;
+      img.alt = "Catalogue Ben Laribi Dattes — page " + (i + 1);
+      if (img.complete) figure.classList.add("is-ready");
+      if (!first) {
+        figure.classList.remove("turn-next", "turn-prev");
+        void figure.offsetWidth;
+        figure.classList.add(dir);
+      }
+      prevBtn.disabled = i === 0;
+      nextBtn.disabled = i === pages.length - 1;
+      countEl.textContent = (i + 1) + " / " + pages.length;
+      thumbs.forEach(function (t, k) { t.setAttribute("aria-current", k === i ? "true" : "false"); });
+    }
+
+    openers.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (!dialog) build();
+        lastFocus = btn;
+        current = 0;
+        img.removeAttribute("src");
+        show(0);
+        // warm the other page so turning is instant
+        pages.forEach(function (p) { var pre = new Image(); pre.sizes = img.sizes; pre.srcset = p.srcset; pre.src = p.src; });
+        document.documentElement.style.overflow = "hidden";
+        dialog.showModal();
+      });
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initLang();
     initCatNav();
@@ -276,5 +407,6 @@
     initToTop();
     initYear();
     initContactForm();
+    initCatalogue();
   });
 })();

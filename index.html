@@ -35,7 +35,7 @@
 <link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="assets/css/style.css?v=18">
+<link rel="stylesheet" href="assets/css/style.css?v=19">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -530,10 +530,17 @@
         <div>
           <h3 data-fr-only>Vous êtes importateur ou distributeur ?</h3>
           <h3 data-en-only>Are you an importer or distributor?</h3>
-          <p data-fr-only>Contactez-nous pour recevoir notre catalogue et nos tarifs export.</p>
-          <p data-en-only>Contact us to receive our catalogue and export prices.</p>
+          <p data-fr-only>Feuilletez notre catalogue : toute notre gamme de dattes Deglet Nour et dattes communes.</p>
+          <p data-en-only>Browse our catalogue: our full range of Deglet Nour and common dates.</p>
         </div>
-        <a href="contact.html" class="btn btn-dark"><span data-fr-only>Demander un devis</span><span data-en-only>Request a quote</span></a>
+        <button type="button" class="btn-catalogue" data-catalogue-open aria-haspopup="dialog">
+          <span class="btn-catalogue-book" aria-hidden="true"><span class="btn-catalogue-cover"></span></span>
+          <span class="btn-catalogue-label">
+            <small data-fr-only>Feuilleter</small><small data-en-only>Browse</small>
+            <b data-fr-only>Notre Catalogue</b><b data-en-only>Our Catalogue</b>
+          </span>
+          <svg class="btn-catalogue-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
       </div>
     </div>
   </section>
@@ -601,6 +608,6 @@
 
 <button class="to-top" aria-label="Top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>
 
-<script src="assets/js/main.js?v=4"></script>
+<script src="assets/js/main.js?v=5"></script>
 </body>
 </html>
