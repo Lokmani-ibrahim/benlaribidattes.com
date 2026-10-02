@@ -1,0 +1,15 @@
+/* CLIENT */
+Sté Ben Laribi & Co — Ben Laribi Dattes
+Kébili, Tunisie
+https://benlaribidattes.com/
+
+/* DESIGN & DÉVELOPPEMENT */
+Agence : Ufuk Connect
+Site : https://ufuk.tn/
+Développeur : Lokmani Ibrahim
+Site : https://ibrahim.tn/
+Localisation : Tunisie
+
+/* SITE */
+Langues : Français, English
+Standards : HTML5, CSS3, JavaScript, Schema.org

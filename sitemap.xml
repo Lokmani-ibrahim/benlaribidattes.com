@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://benlaribidattes.com/</loc>
+    <lastmod>2026-10-02</lastmod>
+    <priority>1.0</priority>
+    <image:image><image:loc>https://benlaribidattes.com/assets/images/og-image.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://benlaribidattes.com/produits.html</loc>
+    <lastmod>2026-10-02</lastmod>
+    <priority>0.9</priority>
+    <image:image><image:loc>https://benlaribidattes.com/assets/images/products/web/bouquet-500gr.webp</image:loc></image:image>
+    <image:image><image:loc>https://benlaribidattes.com/assets/images/products/web/deglet-nour-dates-loose-naturel-vrac-1kg-5kg.webp</image:loc></image:image>
+    <image:image><image:loc>https://benlaribidattes.com/assets/images/products/web/cup-284gr-750gr-795gr-800gr.webp</image:loc></image:image>
+    <image:image><image:loc>https://benlaribidattes.com/assets/images/products/web/boite-1kg.webp</image:loc></image:image>
+    <image:image><image:loc>https://benlaribidattes.com/assets/images/products/web/ravier-500gr-aligh.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://benlaribidattes.com/entreprise.html</loc>
+    <lastmod>2026-10-02</lastmod>
+    <priority>0.8</priority>
+    <image:image><image:loc>https://benlaribidattes.com/assets/images/palmeraie.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://benlaribidattes.com/contact.html</loc>
+    <lastmod>2026-10-02</lastmod>
+    <priority>0.7</priority>
+  </url>
+</urlset>

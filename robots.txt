@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /en-construction.html
+
+Sitemap: https://benlaribidattes.com/sitemap.xml
